@@ -13,9 +13,8 @@ class ModDeck():
         self.deck = deck
     
     def get_next_card(self, action=None):
-        reset = ['x2', 'null', 'bless', 'curse']
         card = self.deck.pop()
-        if card in reset or len(self.deck) == 0:
+        if len(self.deck) == 0:
             self.load_deck()
         print(card)
         return card
