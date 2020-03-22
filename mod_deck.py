@@ -41,10 +41,8 @@ class ModDeck():
         
 
     def game(self):
-        playing = True
-        while(playing):
-            action = input("Enter action ").lower().split(" ")
-            self.parse_action(action)
+        action = input("Enter action ").lower().split(" ")
+        self.parse_action(action)
     
     def parse_action(self, action):
         actions = {'roll': self.get_next_card,
@@ -63,11 +61,31 @@ class ModDeck():
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--deck_name", "-d", help="Name of character's deck to load")
+    parser.add_argument("--deck_names", "-d", nargs='+', help="Name of character's deck to load")
+    parser.add_argument("--create", "-c", nargs='+', help="Enter name of new deck you wish to create. It will create a base mod deck and character mods can be added removed")
     args = parser.parse_args()
-    d = args.deck_name.lower()
-    deck = ModDeck(d)
-    deck.game()
+    if args.create != None:
+        names = [n.lower() for n in args.create]
+        for name in names:
+            create_new_deck(name)
+    if args.deck_names != None:
+        d = args.deck_names
+        print(d)
+        decks = [ds.lower() for ds in d]
+        chars = {d:ModDeck(d) for d in decks}
+        while True:
+            char = input('Select Character ')
+            if char in chars.keys():
+                deck = chars[char]
+                deck.game()
+            else:
+                print('Did not find character name. Please Retry')
 
+def create_new_deck(name):
+    with open('decks/base.txt') as f:
+        deck = [s.rstrip('\n') for s in f.readlines()]
+        with open('decks/' + name + '.txt', 'w+') as g:
+            for d in deck:
+                g.write(d+'\n')
 if __name__ == "__main__":
     parse_args()
